@@ -1,16 +1,16 @@
-use image::io::Reader;
+use image::ImageReader as Reader;
 use image;
 use image::GenericImageView;
 use std::io::{self, BufReader, BufRead, Cursor};
-use atty::Stream;
+use std::io::IsTerminal;
 use std::fs;
 
 pub fn load_image_from_stdin() -> Result<image::DynamicImage, image::ImageError> {
     let mut buffer: Vec<u8> = Vec::new();
-    let mut raw_reader: Box<dyn BufRead> = if atty::is(Stream::Stdin) {
+    let mut raw_reader: Box<dyn BufRead> = if io::stdin().is_terminal() {
       eprintln!("Error: No image provided");
       std::process::exit(1);
-    } else {  
+    } else {
       Box::new(BufReader::new(io::stdin()))
     };
 
